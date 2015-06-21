@@ -1,10 +1,16 @@
 #gulp config
 
 ##Easier to use
+No longer have to write some code, configuration only
 
 ##Reuse your tasks
+If you would like to write some task yourself, it's exactly the same the NPM modules to config
+
+Try to use src/dest/options through functions
 
 ##Quickly setup
+Install the modules and config them
+
 ##Target usage:
 ```js
 gconf
@@ -12,6 +18,7 @@ gconf
 .loadTasks({
   'custom-copy': './tasks/copy'
 })
+// TODO
 .loadPipelines({
   css: ['gulp-sass', 'gulp-prefix']
 })
@@ -41,6 +48,8 @@ i    {
     }
   ]
 })
+
+// TODO
 //for complex projects
 // create sub-module rules like in a folder:
 // src.theme.myModule
@@ -52,8 +61,4 @@ gconf.subModule('theme', {
     src: ''
   }
 })
-```
-```js
-import gconf from 'gulp-config2'
-
 ```
