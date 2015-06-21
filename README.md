@@ -1,4 +1,4 @@
-#gulp confog
+#gulp config
 
 ##Easier to use
 
@@ -7,28 +7,32 @@
 ##Quickly setup
 ##Target usage:
 ```js
-import gulp from 'gulp'
-import config from 'gulp-config2'
+gconf
+.loadTasks('copy', 'browserify', 'gulp-sass', 'gulp-prefix', 'gulp-ignore')
+.loadTasks({
+  'custom-copy': './tasks/copy'
+})
+.loadPipelines({
+  css: ['gulp-sass', 'gulp-prefix']
+})
 
-config
-.use(gulp)
-.loadTasks(
-  'task/jshint',
-  {"custom-copy": 'task/copy'},
-  {'mocha': '/path/to/mocha'},
-  {queue:
-    ['custom-copy', 'mocha']
+gconf({
+  css: {
+    src: 'src/*.css',
+    dest: 'public',
+    'gulp-sass': {
+
+    }
   }
-)
+})
 
-config({
+gconf({
   src: ['src/{**/}*.js'], //for simple projects
   dest: 'dist', //for simple projects
   jshint: {
     node: true
   }, //configuration for gulp-jshint
-  'custom-copy': [
-    {
+i    {
       src: 'src/images', //overwrite the global src
       dest: '<%=dest%>/assets/images'
     }, //configuration for copy
@@ -40,7 +44,7 @@ config({
 //for complex projects
 // create sub-module rules like in a folder:
 // src.theme.myModule
-config.subModule('theme', {
+gconf.subModule('theme', {
   default: 'myModule',
   //src: src.theme.myModule,
   dest: 'public',
@@ -48,4 +52,8 @@ config.subModule('theme', {
     src: ''
   }
 })
+```
+```js
+import gconf from 'gulp-config2'
+
 ```

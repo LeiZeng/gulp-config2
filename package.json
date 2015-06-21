@@ -26,5 +26,8 @@
     "should": "^6.0.3",
     "through2": "^2.0.0",
     "watchify": "^3.2.2"
+  },
+  "dependencies": {
+    "vinyl-fs": "^1.0.0"
   }
 }
