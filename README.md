@@ -12,24 +12,79 @@ Try to use src/dest/options through functions
 Install the modules and config them
 
 ##Target usage:
+###Add a default copy task
 ```js
-gconf
-.loadTasks('copy', 'browserify', 'gulp-sass', 'gulp-prefix', 'gulp-ignore')
-.loadTasks({
-  'custom-copy': './tasks/copy'
+gconf.loadTasks('copy')
+gconf({
+  src: 'src/{**/}*.*',
+  dest: 'public'
 })
-.loadPipelines({
+```
+It's exactly the same to this gulp task:
+```js
+gulp.task('copy', function () {
+  return gulp.src('src/{**/}*.*')
+    .pipe(gulp.dest('public'))
+})
+```
+###Add a task from a module sass
+```js
+gconf.loadTasks('gulp-sass')
+gconf({
+  'gulp-sass': {
+    src: 'src/{**/}*.*',
+    dest: 'public',
+    options: {
+      // sometions
+    }
+  }
+})
+```
+It's exactly the same to this gulp task:
+
+```js
+gulp.task('gulp-sass', function () {
+  return gulp.src('src/{**/}*.*')
+    .pipe(require('gulp-sass')(/*sometions*/))
+    .pipe(gulp.dest('public'))
+})
+```
+###Add a pipeline task
+```js
+gconf.loadPipelines({
   css: ['gulp-sass', 'gulp-prefix']
 })
 
 gconf({
   css: {
     src: 'src/*.css',
-    dest: 'public',
+    dest: 'public', //or use the global dest
     'gulp-sass': {
-
+      // options
+    },
+    'gulp-prefix': {
+      // options
     }
   }
+})
+```
+It's exactly the same to this gulp task:
+
+```js
+gulp.task('css', function () {
+  return gulp.src('src/*.css')
+    .pipe(require('gulp-sass')(/*sometions*/))
+    .pipe(require('gulp-prefix')(/*sometions*/))
+    .pipe(gulp.dest('public'))
+})
+```
+###Add multiple tasks
+
+```js
+gconf
+.loadTasks('copy', 'browserify', 'gulp-sass', 'gulp-prefix', 'gulp-ignore')
+.loadTasks({
+  'custom-copy': './tasks/copy'
 })
 
 gconf({
