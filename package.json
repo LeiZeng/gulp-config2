@@ -16,18 +16,18 @@
     "babel-runtime": "^5.5.8",
     "babelify": "^6.1.2",
     "browserify": "^10.2.4",
-    "del": "^1.2.0",
-    "gulp": "^3.9.0",
-    "gulp-util": "^3.0.5",
-    "lodash": "^3.9.3",
     "merge-stream": "^0.1.7",
     "mocha": "^2.2.5",
     "run-sequence": "^1.1.0",
     "should": "^6.0.3",
-    "through2": "^2.0.0",
     "watchify": "^3.2.2"
   },
   "dependencies": {
+    "del": "^1.2.0",
+    "gulp": "^3.9.0",
+    "gulp-util": "^3.0.5",
+    "lodash": "^3.9.3",
+    "through2": "^2.0.0",
     "vinyl-fs": "^1.0.0"
   }
 }

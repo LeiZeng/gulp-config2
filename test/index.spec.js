@@ -1,4 +1,5 @@
 import gutil from 'gulp-util'
+import fs from 'fs'
 
 var gulp = require('gulp')
 var gconf = require('../src/index')
@@ -83,5 +84,43 @@ describe('Gulp Config Task Configuration', () => {
     })
     gconf.getConf().copy.src.should.be.equal('another-src/{**/}*.*')
     gconf.getConf().copy.dest.should.be.equal('another-public')
+  })
+})
+
+describe('Run gulp tasks', () => {
+  it('should run a copy task', cb => {
+    gconf.loadTasks('copy')
+    gconf({
+      src: 'test/test.scss'
+    })
+    gulp.start('copy', () => {
+      // NOTE cwd changes to the module base
+      fs.exists('public/test.scss', exists => {
+        exists.should.be.equal(true)
+        cb()
+      })
+    })
+  })
+  it('should load a pipe line from npm modules', cb => {
+    gconf.loadPipelines({
+      css: ['gulp-sass', 'gulp-autoprefixer']
+    })
+    gconf({
+      css: {
+        src: 'test/test.scss',
+        'gulp-sass': {
+          test : 'test'
+        }
+      }
+    })
+    gulp.hasTask('css').should.be.equal(true)
+    gconf.getConf().css.src.should.be.equal('test/test.scss')
+    gulp.start('css', function () {
+      // NOTE cwd changes to the module base
+      fs.exists('public/test.css', exists => {
+        exists.should.be.equal(true)
+        cb()
+      })
+    })
   })
 })

@@ -18,7 +18,6 @@ gconf
 .loadTasks({
   'custom-copy': './tasks/copy'
 })
-// TODO
 .loadPipelines({
   css: ['gulp-sass', 'gulp-prefix']
 })
