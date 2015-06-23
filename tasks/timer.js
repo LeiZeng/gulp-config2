@@ -1,25 +1,27 @@
 import through from 'through2'
 import gutil from 'gulp-util'
 
-var startTime
+var startTime, name
+
+function start(chunk, enc, cb) {
+  cb(null, chunk)
+}
+
+function end(cb) {
+  var time = new Date() - startTime;
+  gutil.log([
+    'Timer:',
+    gutil.colors.cyan(name),
+    'takes',
+    gutil.colors.magenta(time > 1000 ? time / 1000 + 's' : time, 'ms')
+  ].join(' '))
+
+  cb()
+}
 
 export default function timer(taskname) {
-  var gulp = this
-
   startTime = new Date()
+  name = taskname || 'task'
 
-  function start() {}
-
-  function end() {
-    var time = new Date() - startTime;
-
-    gutil.log([
-      'Timer:',
-      gutil.colors.cyan(taskname),
-      'takes',
-      gutil.colors.magenta(time > 1000 ? time / 1000 + 's' : time, 'ms')
-    ].join(' '))
-  }
-
-  return through(start).on('end', end)
+  return through.obj(start, end)
 }

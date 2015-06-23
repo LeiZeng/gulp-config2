@@ -16,14 +16,14 @@ Install the modules and config them
 ```js
 gconf.loadTasks('copy')
 gconf({
-  src: 'src/{**/}*.*',
+  src: 'src/**/*.*',
   dest: 'public'
 })
 ```
 It's exactly the same to this gulp task:
 ```js
 gulp.task('copy', function () {
-  return gulp.src('src/{**/}*.*')
+  return gulp.src('src/**/*.*')
     .pipe(gulp.dest('public'))
 })
 ```
@@ -32,11 +32,9 @@ gulp.task('copy', function () {
 gconf.loadTasks('gulp-sass')
 gconf({
   'gulp-sass': {
-    src: 'src/{**/}*.*',
+    src: 'src/**/*.*',
     dest: 'public',
-    options: {
       // sometions
-    }
   }
 })
 ```
@@ -44,7 +42,7 @@ It's exactly the same to this gulp task:
 
 ```js
 gulp.task('gulp-sass', function () {
-  return gulp.src('src/{**/}*.*')
+  return gulp.src('src/**/*.*')
     .pipe(require('gulp-sass')(/*sometions*/))
     .pipe(gulp.dest('public'))
 })
@@ -82,25 +80,17 @@ gulp.task('css', function () {
 
 ```js
 gconf
-.loadTasks('copy', 'browserify', 'gulp-sass', 'gulp-prefix', 'gulp-ignore')
+.loadTasks('copy', 'browserify', 'gulp-sass', 'gulp-autoprefixer', 'gulp-jshint')
 .loadTasks({
   'custom-copy': './tasks/copy'
 })
 
 gconf({
-  src: ['src/{**/}*.js'], //for simple projects
+  src: ['src/**/*.js'], //for simple projects
   dest: 'dist', //for simple projects
-  jshint: {
+  'gulp-jshint': {
     node: true
-  }, //configuration for gulp-jshint
-i    {
-      src: 'src/images', //overwrite the global src
-      dest: '<%=dest%>/assets/images'
-    }, //configuration for copy
-    {
-      src: 'src/index.html',
-    }
-  ]
+  }
 })
 
 // TODO

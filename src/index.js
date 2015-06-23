@@ -2,7 +2,6 @@ import path from 'path'
 
 import gutil from 'gulp-util'
 import _ from 'lodash'
-import th from 'through2'
 import vfs from 'vinyl-fs'
 import del from 'del'
 
@@ -87,6 +86,7 @@ function loadTask(taskName, through) {
           && configList[taskName].src)
         || configList.src)
       .pipe(through(configList[taskName]))
+      .on('error', gutil.log)
       .pipe(gulp.dest(
         (configList[taskName]
           && configList[taskName].dest)
@@ -126,6 +126,7 @@ function loadPipeline(taskName, pipeline) {
             ? configList[taskName][getTaskPluginName(item)]
             : null
           st = st.pipe(getTaskPlugin(item)(taskConfig))
+            .on('error', gutil.log)
         })
 
       return st.pipe(gulp.dest(
