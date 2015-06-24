@@ -12,7 +12,7 @@ function end(cb) {
   gutil.log([
     'Timer:',
     gutil.colors.cyan(name),
-    'takes',
+    'rebundle takes',
     gutil.colors.magenta(time > 1000 ? time / 1000 + 's' : time, 'ms')
   ].join(' '))
 

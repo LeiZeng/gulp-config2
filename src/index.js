@@ -10,7 +10,7 @@ let gulp
 import timer from '../tasks/timer'
 
 const globalConfigDefault = {
-  src: 'src/{**/}*.*',
+  src: 'src/**/*.*',
   dest: 'public'
 }
 const taskListDefault = {
@@ -31,16 +31,19 @@ config.getGulp = function getGulp() {
   return gulp
 }
 
-config.getConf = function getConf() {
-  return configList
+config.getConf = function getConf(taskName, ...deps) {
+  return (deps && deps.length && configList[taskName]
+      ? deps.reduce((result, key) => {
+          return result ? result[key] : null
+        }, configList[taskName])
+      : configList[taskName]) || configList
 }
-
 config.use = function useGulp(gulpContext) {
   gulp = gulpContext || gulp
   return config
 }
 
-config.loadTasks = function loadTasks(tasks, ...others) {
+config.load = function load(tasks, ...others) {
   if (_.isString(tasks)) {
     loadPlugin(tasks)
   } else if (_.isObject(tasks)) {
@@ -59,7 +62,7 @@ config.loadTasks = function loadTasks(tasks, ...others) {
   return config
 }
 
-config.loadPipelines = function loadPipelines(pipelines) {
+config.pipelines = function pipelines(pipelines) {
   return Object.keys(pipelines)
     .map(taskName => {
       return loadPipeline(taskName, pipelines[taskName])

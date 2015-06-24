@@ -4,7 +4,7 @@ import gconf from './src/index'
 
 gconf
 .use(gulp)
-.loadTasks(
+.load(
   'clean',
   'copy',
   'browserify',
