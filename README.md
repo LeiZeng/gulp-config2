@@ -13,7 +13,7 @@ gconf({
 })
 ```
 ##Reuse your tasks
-If you would like to write some task yourself, it's exactly the same the NPM modules to config
+If you would like to write some task yourself, it can be exactly the same to the NPM modules
 `tasks/myTask.js`
 ```js
 import through from 'through2'
@@ -38,7 +38,7 @@ Try to use src/dest/options through functions
 
 
 ##Usage:
-###Add a built-in copy task, `copy` `clean` `browserify` are ready to use.
+###Add a built-in copy task, `copy` `clean` are ready to use.
 ```js
 gconf.load('copy')
 gconf({
@@ -53,7 +53,7 @@ gulp.task('copy', function () {
     .pipe(gulp.dest('public'))
 })
 ```
-###Add a task from a module sass
+###Add a task from a NPM module `gulp-sass`
 ```js
 gconf.load('gulp-mocha')
 gconf({
@@ -76,12 +76,17 @@ gulp.task('gulp-mocha', function () {
 
 ```js
 gconf.load({
-  'custom-copy': './tasks/copy'
+  'custom-copy': './tasks/copy',
+  'sass': 'gulp-sass'
 })
 gconf({
+  dest: 'public',
   'custom-copy': {
-    src: ['src/**/*.js'], //for simple projects
-    dest: 'dist', //for simple projects
+    src: ['src/**/*.js'],
+    dest: 'dist',//overwrote the global dest
+  },
+  sass: {
+    src: ['src/sass/index.scss']
   }
 })
 ```
@@ -108,9 +113,10 @@ gconf.pipelines({
 })
 
 gconf({
+  dest: 'public',
   css: {
     src: 'src/*.css',
-    dest: 'public', //or use the global dest
+    dest: 'dist', //otherwise use the global dest
     'gulp-sass': {
       // options
     },
