@@ -1,6 +1,6 @@
 {
   "name": "gulp-config2",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "gulp config tools",
   "main": "dist/index.js",
   "directories": {
@@ -43,14 +43,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/LeiZeng/gulp-config.git"
+    "url": "https://github.com/LeiZeng/gulp-config2.git"
   },
   "keywords": [
     "gulp",
     "config"
   ],
   "bugs": {
-    "url": "https://github.com/LeiZeng/gulp-config/issues"
+    "url": "https://github.com/LeiZeng/gulp-config2/issues"
   },
-  "homepage": "https://github.com/LeiZeng/gulp-config"
+  "homepage": "https://github.com/LeiZeng/gulp-config2"
 }
