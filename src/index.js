@@ -2,50 +2,35 @@ import path from 'path'
 
 import gutil from 'gulp-util'
 import _ from 'lodash'
+import merge from 'merge-stream'
 import vfs from 'vinyl-fs'
-import del from 'del'
 
-let gulp
+let gulp = require('gulp')
 
+import gconf from './config'
 import timer from '../tasks/timer'
+import clean from '../tasks/clean'
 
-const globalConfigDefault = {
-  src: 'src/**/*.*',
-  dest: 'public'
-}
 const taskListDefault = {
   clean: clean,
   copy: gutil.noop  //a default through
 }
+const IsCustomFile = /\./
 
 let taskList = _.clone(taskListDefault)
-let configList = _.clone(globalConfigDefault)
 
-const config = function gulpConfig(conf) {
-  gulp = gulp || require('gulp')
-  configList = _.merge(configList, conf)
-  return config
-}
-
-config.getGulp = function getGulp() {
+gconf.getGulp = function getGulp() {
   return gulp
 }
 
-config.getConf = function getConf(taskName, ...deps) {
-  return (deps && deps.length && configList[taskName]
-      ? deps.reduce((result, key) => {
-          return result ? result[key] : null
-        }, configList[taskName])
-      : configList[taskName]) || configList
-}
-config.use = function useGulp(gulpContext) {
+gconf.use = function useGulp(gulpContext) {
   gulp = gulpContext || gulp
-  return config
+  return gconf
 }
 
-config.load = function load(tasks, ...others) {
+gconf.load = function load(tasks, ...others) {
   if (_.isString(tasks)) {
-    loadPlugin(tasks)
+    loadTask(loadPlugin(tasks))
   } else if (_.isObject(tasks)) {
     loadPluginObject(tasks)
   }
@@ -55,51 +40,70 @@ config.load = function load(tasks, ...others) {
       return _.isString(task)
     })
     .map(task => {
-      return loadPlugin(task)
+      return loadTask(loadPlugin(task))
     })
   }
 
-  return config
+  return gconf
 }
 
-config.pipelines = function pipelines(pipelines) {
+gconf.pipelines = function pipelines(pipelines) {
   return Object.keys(pipelines)
     .map(taskName => {
       return loadPipeline(taskName, pipelines[taskName])
     })
 }
-config.reset = function reset() {
+gconf.reset = function reset() {
   taskList = _.clone(taskListDefault)
-  configList = _.clone(globalConfigDefault)
+  this.default()
   gulp.reset()
-  return config
+  return gconf
 }
 
-function loadTask(taskName, through) {
-  if (gulp.hasTask(taskName)) return
+function loadTask(obj) {
+  if (gulp.hasTask(obj.taskName)) return
 
   // clean task is special as here
-  if (through === clean) {
-    return gulp.task(taskName, clean((configList[taskName] && configList[taskName].src) || configList.dest))
+  if (obj.modules[obj.taskName] === clean) {
+    return gulp.task(obj.taskName,
+      clean(gconf.getConf(obj.taskName, 'src') || gconf.getConf('dest')))
   }
 
-  gulp.task(taskName, function () {
-    return gulp.src(
-        (configList[taskName]
-          && configList[taskName].src)
-        || configList.src)
-      .pipe(through(configList[taskName]))
-      .on('error', gutil.log)
-      .pipe(gulp.dest(
-        (configList[taskName]
-          && configList[taskName].dest)
-        || configList.dest))
-      .pipe(timer(taskName))
+  return gulp.task(obj.taskName, function() {
+    var conf = gconf.getConf(obj.taskName)
+
+    // enable multiple entries
+    conf = _.isArray(conf) ? conf : [conf]
+
+    return merge.apply(gulp, conf.map(config => {
+      var src = gulp.src(config.src, config.srcOption)
+
+      // enable pipelines
+      Object.keys(obj.modules)
+        .filter(key => {
+          return _.isFunction(obj.modules[key])
+        })
+        .map(key => {
+          src = src.pipe(obj.modules[key](config[key] || config))
+        })
+
+      src = src.on('error', gutil.log)
+
+      if (config.dest) {
+        src = src.pipe(gulp.dest(config.dest, config.destOption))
+      }
+
+      if (gulp.isWatching) {
+        src = src.pipe(timer(obj.taskName))
+      }
+
+      return src
+    }))
   })
 }
 
 function getTaskPlugin(pluginName) {
-    return /\./.test(pluginName)
+    return IsCustomFile.test(pluginName)
       ? (taskList[path.basename(pluginName)]
         || require(path.relative(__dirname, path.resolve(pluginName))))
       : (taskList[pluginName]
@@ -107,7 +111,7 @@ function getTaskPlugin(pluginName) {
 }
 
 function getTaskPluginName(pluginName) {
-    return /\./.test(pluginName) ?
+    return IsCustomFile.test(pluginName) ?
       path.basename(pluginName) :
       pluginName
 }
@@ -115,64 +119,53 @@ function getTaskPluginName(pluginName) {
 function loadPipeline(taskName, pipeline) {
   if (gulp.hasTask(taskName)) return
 
-  gulp.task(taskName, (cb) => {
-      let st = gulp.src(
-        (configList[taskName]
-          && configList[taskName].src)
-        || configList.src)
+  var obj = {
+    taskName: taskName,
+    modules: {}
+  }
 
-      // wrap the pipe line into stream
-      if(pipeline && pipeline.length)
-        pipeline.forEach(item => {
-          var taskConfig = (configList[taskName]
-              && configList[taskName][getTaskPluginName(item)])
-            ? configList[taskName][getTaskPluginName(item)]
-            : null
-          st = st.pipe(getTaskPlugin(item)(taskConfig))
-            .on('error', gutil.log)
-        })
-
-      return st.pipe(gulp.dest(
-        (configList[taskName]
-          && configList[taskName].dest)
-        || configList.dest))
-        .pipe(timer(taskName))
+  // wrap the pipe line into stream
+  if(pipeline && pipeline.length) {
+    pipeline.forEach(item => {
+      _.merge(obj.modules, loadPlugin(item))
     })
+  }
+  return loadTask(obj)
 }
 
 function loadPluginObject(obj) {
   return Object.keys(obj)
     .map(key => {
-      return loadPlugin(obj[key], key)
+      return loadTask(loadPlugin(obj[key], key))
     })
 }
 
 function loadPlugin(pluginName, taskName) {
-  return /\./.test(pluginName)
-    ? loadPluginFromFile(pluginName, taskName)
-    : loadPluginModule(pluginName, taskName)
+  return IsCustomFile.test(pluginName)
+    ? loadFromFile(pluginName, taskName)
+    : loadModule(pluginName, taskName)
 }
 
-function loadPluginModule(moduleName, taskName) {
+function loadModule(moduleName, taskName) {
+  taskName = taskName || moduleName
   // cache the module or load the default tasks
-  taskList[moduleName] = taskList[moduleName]
-    || require(moduleName)
-  loadTask(taskName || moduleName, taskList[moduleName])
-}
-
-function loadPluginFromFile(fileName, taskName) {
-  taskName = taskName || path.basename(fileName)
-  var pathname = path.resolve(fileName)
-  var relative = path.relative(__dirname, pathname)
   taskList[taskName] = taskList[taskName]
-    || require(pathname)
-  loadTask(taskName, taskList[fileName])
-}
+    || require(moduleName)
 
-function clean(src) {
-  return function (cb) {
-    del(src, cb)
+  var obj = {
+    taskName: taskName,
+    modules: {}
   }
+  obj.modules[taskName] = taskList[taskName]
+
+  return obj
 }
 
-export default config
+function loadFromFile(fileName, taskName) {
+  var relative = path.relative(__dirname, path.resolve(fileName))
+
+  return loadModule(relative, taskName
+    || path.basename(fileName))
+}
+
+export default gconf

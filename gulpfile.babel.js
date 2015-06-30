@@ -6,18 +6,21 @@ gconf
 .use(gulp)
 .load(
   'clean',
-  'copy',
-  'browserify',
-  'gulp-mocha')
+  'copy')
+.load({
+  mocha: 'gulp-mocha'
+})
 
 gconf({
   clean: {
     src: 'public'
   },
-  copy: {
+  copy: [{
     src: ['src/*.*']
-  },
-  'gulp-mocha': {
+  },{
+    src: ['test/test.scss']
+  }],
+  mocha: {
     src: ['test/**/*.spec.js'],
     ui: 'bdd',
     reporter: 'spec',

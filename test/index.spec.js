@@ -1,8 +1,7 @@
 import gutil from 'gulp-util'
 import fs from 'fs'
-
-var gulp = require('gulp')
-var gconf = require('../src/index')
+import gulp from 'gulp'
+import gconf from '../src/index'
 
 afterEach(() => {
   gconf.reset()
@@ -22,26 +21,26 @@ describe('Gulp Config Task Load', () => {
   })
 
   it('should add a task from npm module name', () => {
-    gulp.hasTask('gulp-sass').should.be.equal(false)
-    gconf.load('gulp-sass')
-    gulp.hasTask('gulp-sass').should.be.equal(true)
+    gulp.hasTask('gulp-mocha').should.be.equal(false)
+    gconf.load('gulp-mocha')
+    gulp.hasTask('gulp-mocha').should.be.equal(true)
   })
 
   it('should remove custom task after reset', () => {
-    gconf.load('gulp-sass')
+    gconf.load('gulp-mocha')
     gconf.load('copy')
-    gulp.hasTask('gulp-sass').should.be.equal(true)
+    gulp.hasTask('gulp-mocha').should.be.equal(true)
     gconf.reset()
-    gulp.hasTask('gulp-sass').should.be.equal(false)
+    gulp.hasTask('gulp-mocha').should.be.equal(false)
     gulp.hasTask('copy').should.be.equal(false)
   })
 
   it('should add multiple tasks from module names', () => {
-    gulp.hasTask('gulp-sass').should.be.equal(false)
+    gulp.hasTask('gulp-mocha').should.be.equal(false)
     gulp.hasTask('copy').should.be.equal(false)
-    gconf.load('copy', 'gulp-sass')
+    gconf.load('copy', 'gulp-mocha')
     gulp.hasTask('copy').should.be.equal(true)
-    gulp.hasTask('gulp-sass').should.be.equal(true)
+    gulp.hasTask('gulp-mocha').should.be.equal(true)
   })
 
   it('should add tasks from file name', () => {
@@ -60,7 +59,7 @@ describe('Gulp Config Task Configuration', () => {
   beforeEach(() => {
     gconf.load(
       'copy',
-      'gulp-sass',
+      'gulp-mocha',
       './test/custom-task')
   })
 
@@ -104,24 +103,17 @@ describe('Run gulp tasks', () => {
   })
   it('should load a pipe line from npm modules', cb => {
     gconf.pipelines({
-      css: ['gulp-sass', 'gulp-autoprefixer']
+      css: ['gulp-eslint', 'gulp-mocha']
     })
     gconf({
       css: {
-        src: 'test/test.scss',
-        'gulp-sass': {
+        'gulp-mocha': {
           test : 'test'
         }
       }
     })
     gulp.hasTask('css').should.be.equal(true)
     gconf.getConf().css.src.should.be.equal('test/test.scss')
-    gulp.start('css', function () {
-      // NOTE cwd changes to the module base
-      fs.exists('public/test.css', exists => {
-        exists.should.be.equal(true)
-        cb()
-      })
-    })
+    gulp.start('css', cb)
   })
 })

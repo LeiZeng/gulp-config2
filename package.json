@@ -7,20 +7,18 @@
     "test": "test"
   },
   "scripts": {
-    "build": "browserify src/index.js -t [babelify] --bare > dist/index.js",
-    "test": "mocha -R spec -r should --compilers js:babel/register --check-leaks test/**/*.spec.js",
-    "t": "gulp gulp-mocha"
+    "build": "babel src --out-dir dist",
+    "test": "mocha -R spec -r should --compilers js:babel/register --check-leaks test/**/*.spec.js"
   },
   "author": "LeiZeng",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "babel": "^5.5.8",
     "babel-runtime": "^5.5.8",
     "babelify": "^6.1.2",
     "browserify": "^10.2.4",
-    "gulp-autoprefixer": "^2.3.1",
+    "gulp-eslint": "^0.14.0",
     "gulp-mocha": "^2.1.2",
-    "gulp-sass": "^2.0.1",
     "run-sequence": "^1.1.0",
     "should": "^6.0.3"
   },
@@ -29,13 +27,14 @@
     "gulp": "^3.9.0",
     "gulp-util": "^3.0.5",
     "lodash": "^3.9.3",
-    "through2": "^2.0.0",
-    "vinyl-fs": "^1.0.0"
+    "merge-stream": "^0.1.7",
+    "through2": "^2.0.0"
   },
   "browserify": {
     "transform": [
       "babelify",
       {
+        "stage": 0,
         "optional": [
           "runtime"
         ]
