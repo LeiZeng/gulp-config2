@@ -88,7 +88,6 @@ gconf({
 
 ###Config a task with multiple entries
 ```js
-//TODO
 gconf.load('copy')
 gconf({
   'copy': [{
