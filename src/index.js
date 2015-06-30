@@ -3,7 +3,6 @@ import path from 'path'
 import gutil from 'gulp-util'
 import _ from 'lodash'
 import merge from 'merge-stream'
-import vfs from 'vinyl-fs'
 
 let gulp = require('gulp')
 
@@ -76,21 +75,31 @@ function loadTask(obj) {
     conf = _.isArray(conf) ? conf : [conf]
 
     return merge.apply(gulp, conf.map(config => {
-      var src = gulp.src(config.src, config.srcOption)
+      var srcOption = [].concat(config.src || gconf.getConf('src'))
+
+      // src options
+      if (config.srcOption) {
+        srcOption = srcOption.concat(config.srcOption)
+      }
+
+      var src = gulp.src.apply(gulp, srcOption)
 
       // enable pipelines
       Object.keys(obj.modules)
-        .filter(key => {
-          return _.isFunction(obj.modules[key])
-        })
-        .map(key => {
+        .forEach(key => {
           src = src.pipe(obj.modules[key](config[key] || config))
         })
 
       src = src.on('error', gutil.log)
 
       if (config.dest) {
-        src = src.pipe(gulp.dest(config.dest, config.destOption))
+        src = src.pipe(
+          gulp.dest(
+            config.dest
+              || gconf.getConf('dest'),
+            config.destOption
+          )
+        )
       }
 
       if (gulp.isWatching) {
@@ -127,7 +136,7 @@ function loadPipeline(taskName, pipeline) {
   // wrap the pipe line into stream
   if(pipeline && pipeline.length) {
     pipeline.forEach(item => {
-      _.merge(obj.modules, loadPlugin(item))
+      _.merge(obj.modules, loadPlugin(item).modules)
     })
   }
   return loadTask(obj)

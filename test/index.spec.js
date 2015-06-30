@@ -103,17 +103,18 @@ describe('Run gulp tasks', () => {
   })
   it('should load a pipe line from npm modules', cb => {
     gconf.pipelines({
-      css: ['gulp-eslint', 'gulp-mocha']
+      js: ['gulp-eslint', 'copy']
     })
     gconf({
-      css: {
-        'gulp-mocha': {
+      js: {
+        src: 'src/*.js',
+        'gulp-eslint': {
           test : 'test'
         }
       }
     })
-    gulp.hasTask('css').should.be.equal(true)
-    gconf.getConf().css.src.should.be.equal('test/test.scss')
-    gulp.start('css', cb)
+    gulp.hasTask('js').should.be.equal(true)
+    gconf.getConf().js.src.should.be.equal('src/*.js')
+    gulp.start('js', cb)
   })
 })

@@ -1,8 +1,11 @@
 #gulp config
-
+```bash
+npm install --save-dev gulp-config2
+```
 ##Easier to use
 No longer have to write some code, configuration only
 ```js
+import gconf from 'gulp-config2'
 gconf.load('gulp-sass')
 gconf({
   'gulp-sass': {
@@ -102,6 +105,35 @@ gconf({
       src: ['src2/**/*.js'],
       dest: 'dist2',
   }]
+})
+```
+
+###Add a queue task
+```js
+TODO
+gconf.queue({
+  mirror: [
+    'clean',
+    'copy'
+  ]
+})
+
+gconf({
+  mirror: {
+    'clean': {
+      src: [
+        'public/images',
+        'public/webfont',
+      ]
+    },
+    'copy': [{
+      src: 'src/assets/images',
+      dest: 'public/images'
+    },{
+      src: 'node_modules/webfont/**/*.*',
+      dest: 'public/webfont'
+    }]
+  }
 })
 ```
 

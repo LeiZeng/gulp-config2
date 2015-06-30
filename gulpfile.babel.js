@@ -8,7 +8,8 @@ gconf
   'clean',
   'copy')
 .load({
-  mocha: 'gulp-mocha'
+  mocha: 'gulp-mocha',
+  lint: 'gulp-eslint'
 })
 
 gconf({
@@ -16,14 +17,24 @@ gconf({
     src: 'public'
   },
   copy: [{
-    src: ['src/*.*']
-  },{
-    src: ['test/test.scss']
+      src: ['src/*.*']
+    },{
+      src: ['test/test.scss']
   }],
   mocha: {
     src: ['test/**/*.spec.js'],
     ui: 'bdd',
     reporter: 'spec',
     require: ['should']
+  },
+  lint: {
+    "ecmaFeatures": {
+      "blockBindings": true,
+      "forOf": true,
+      "jsx": true
+    },
+    "rules": {
+      "semi": 2
+    }
   }
 })
