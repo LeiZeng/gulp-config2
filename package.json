@@ -1,6 +1,6 @@
 {
   "name": "gulp-config2",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "gulp config tools",
   "main": "dist/index.js",
   "directories": {
