@@ -48,4 +48,17 @@ describe('Gulp Config', () => {
     })
     config.getConf('copy', 'options', 'readonly').should.be.equal(true)
   })
+
+  it('should get config of nested key with "."', () => {
+    config({
+      js: {
+        src: '123',
+        dest: '123',
+        clean: {
+          src: 'clean'
+        }
+      }
+    })
+    config.getConf('js.clean', 'src').should.be.equal('clean')
+  })
 })

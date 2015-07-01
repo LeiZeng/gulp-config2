@@ -85,7 +85,6 @@ function loadTask(obj) {
   // clean task is special as here
   if (obj.modules[obj.taskName] === clean) {
     return gulp.task(obj.taskName, function (cb) {
-    console.log(getConf());
       clean(gconf.getConf(obj.taskName, 'src')
         || gconf.getConf('dest'))(cb)
     })
