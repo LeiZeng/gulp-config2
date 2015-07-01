@@ -85,6 +85,7 @@ function loadTask(obj) {
   // clean task is special as here
   if (obj.modules[obj.taskName] === clean) {
     return gulp.task(obj.taskName, function (cb) {
+    console.log(getConf());
       clean(gconf.getConf(obj.taskName, 'src')
         || gconf.getConf('dest'))(cb)
     })
@@ -165,11 +166,11 @@ function loadPlugin(pluginName, taskName) {
 }
 
 function loadModule(moduleName, taskName) {
-  taskName = taskName || moduleName
   // cache the module or load the default tasks
-  taskList[taskName] = taskList[taskName]
+  taskList[taskName] = taskList[moduleName]
     || require(moduleName)
 
+  taskName = taskName || moduleName
   var obj = {
     taskName: taskName,
     modules: {}
