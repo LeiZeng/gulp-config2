@@ -3,6 +3,7 @@ import path from 'path'
 import gutil from 'gulp-util'
 import _ from 'lodash'
 import merge from 'merge-stream'
+import sequence from 'run-sequence'
 
 let gulp = require('gulp')
 
@@ -10,6 +11,7 @@ import gconf from './config'
 import timer from '../tasks/timer'
 import clean from '../tasks/clean'
 
+sequence.use(gulp)
 const taskListDefault = {
   clean: clean,
   copy: gutil.noop  //a default through
@@ -24,6 +26,7 @@ gconf.getGulp = function getGulp() {
 
 gconf.use = function useGulp(gulpContext) {
   gulp = gulpContext || gulp
+  sequence.use(gulp)
   return gconf
 }
 
@@ -50,6 +53,19 @@ gconf.pipelines = function pipelines(pipelines) {
   return Object.keys(pipelines)
     .map(taskName => {
       return loadPipeline(taskName, pipelines[taskName])
+    })
+}
+
+gconf.queue = function queue(obj) {
+  return Object.keys(obj)
+    .map(key => {
+      gulp.task(key, cb => {
+        sequence.apply(gulp, obj[key].concat(cb))
+      })
+      return obj[key]
+        .map(plugin => {
+          return loadTask(loadPlugin(plugin))
+        })
     })
 }
 gconf.reset = function reset() {
