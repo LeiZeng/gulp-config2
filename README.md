@@ -110,7 +110,6 @@ gconf({
 
 ###Add a queue task
 ```js
-TODO
 gconf.queue({
   mirror: [
     'clean',
