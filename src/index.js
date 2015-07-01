@@ -99,11 +99,11 @@ function loadTask(obj) {
     conf = _.isArray(conf) ? conf : [conf]
 
     return merge.apply(gulp, conf.map(config => {
-      var srcOption = [].concat(config.src
+      var srcOption = [].concat(config && config.src
                         || gconf.getConf('src'))
 
       // src options
-      if (config.srcOption) {
+      if (config && config.srcOption) {
         srcOption = srcOption.concat(config.srcOption)
       }
 
@@ -112,12 +112,12 @@ function loadTask(obj) {
       // enable pipelines
       Object.keys(obj.modules)
         .forEach(key => {
-          src = src.pipe(obj.modules[key](config[key] || config))
+          src = src.pipe(obj.modules[key](config && config[key] || config))
         })
 
       src = src.on('error', gutil.log)
 
-      if (config.dest) {
+      if (config && config.dest) {
         src = src.pipe(
           gulp.dest(
             config.dest
@@ -167,11 +167,12 @@ function loadPlugin(pluginName, taskName) {
 }
 
 function loadModule(moduleName, taskName) {
+  taskName = taskName || moduleName
+
   // cache the module or load the default tasks
-  taskList[taskName] = taskList[moduleName]
+  taskList[taskName] = taskList[moduleName || taskName]
     || require(moduleName)
 
-  taskName = taskName || moduleName
   var obj = {
     taskName: taskName,
     modules: {}

@@ -24,8 +24,7 @@ gconf({
   mocha: {
     src: ['test/**/*.spec.js'],
     ui: 'bdd',
-    reporter: 'spec',
-    require: ['should']
+    reporter: 'spec'
   },
   lint: {
     "ecmaFeatures": {

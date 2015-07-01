@@ -1,4 +1,5 @@
 import gutil from 'gulp-util'
+import should from 'should'
 
 import config from '../src/config'
 
@@ -56,9 +57,14 @@ describe('Gulp Configuration', () => {
         dest: '123',
         clean: {
           src: 'clean'
+        },
+        copy: {
+
         }
       }
     })
     config.getConf('js.clean', 'src').should.be.equal('clean')
+    config.getConf('js.copy', 'src').should.be.equal('123')
+    should(config.getConf('js.copy', 'key')).not.be.exist
   })
 })
