@@ -50,14 +50,15 @@ gconf.load = function load(tasks, ...others) {
 }
 
 gconf.pipelines = function pipelines(pipelines) {
-  return Object.keys(pipelines)
+  Object.keys(pipelines)
     .map(taskName => {
       return loadPipeline(taskName, pipelines[taskName])
     })
+  return gconf
 }
 
 gconf.queue = function queue(obj) {
-  return Object.keys(obj)
+  Object.keys(obj)
     .map(key => {
       gulp.task(key, cb => {
         sequence.apply(gulp, obj[key]
@@ -71,6 +72,7 @@ gconf.queue = function queue(obj) {
           return loadTask(loadPlugin(plugin, [key, plugin].join('.')))
         })
     })
+  return gconf
 }
 gconf.reset = function reset() {
   taskList = _.clone(taskListDefault)
