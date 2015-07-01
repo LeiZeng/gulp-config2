@@ -60,11 +60,15 @@ gconf.queue = function queue(obj) {
   return Object.keys(obj)
     .map(key => {
       gulp.task(key, cb => {
-        sequence.apply(gulp, obj[key].concat(cb))
+        sequence.apply(gulp, obj[key]
+          .map(plugin => {
+            return [key, plugin].join('.')
+          })
+          .concat(cb))
       })
       return obj[key]
         .map(plugin => {
-          return loadTask(loadPlugin(plugin))
+          return loadTask(loadPlugin(plugin, [key, plugin].join('.')))
         })
     })
 }
@@ -80,8 +84,10 @@ function loadTask(obj) {
 
   // clean task is special as here
   if (obj.modules[obj.taskName] === clean) {
-    return gulp.task(obj.taskName,
-      clean(gconf.getConf(obj.taskName, 'src') || gconf.getConf('dest')))
+    return gulp.task(obj.taskName, function (cb) {
+      clean(gconf.getConf(obj.taskName, 'src')
+        || gconf.getConf('dest'))(cb)
+    })
   }
 
   return gulp.task(obj.taskName, function() {
@@ -91,7 +97,8 @@ function loadTask(obj) {
     conf = _.isArray(conf) ? conf : [conf]
 
     return merge.apply(gulp, conf.map(config => {
-      var srcOption = [].concat(config.src || gconf.getConf('src'))
+      var srcOption = [].concat(config.src
+                        || gconf.getConf('src'))
 
       // src options
       if (config.srcOption) {
@@ -125,20 +132,6 @@ function loadTask(obj) {
       return src
     }))
   })
-}
-
-function getTaskPlugin(pluginName) {
-    return IsCustomFile.test(pluginName)
-      ? (taskList[path.basename(pluginName)]
-        || require(path.relative(__dirname, path.resolve(pluginName))))
-      : (taskList[pluginName]
-        || require(pluginName))
-}
-
-function getTaskPluginName(pluginName) {
-    return IsCustomFile.test(pluginName) ?
-      path.basename(pluginName) :
-      pluginName
 }
 
 function loadPipeline(taskName, pipeline) {

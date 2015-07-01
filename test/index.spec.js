@@ -123,11 +123,14 @@ describe('Gulp Config', () => {
 
     it('should load a quque', cb => {
       gconf.queue({
-        js: ['gulp-eslint', 'copy']
+        js: ['clean', 'gulp-eslint', 'copy']
       })
       gconf({
         js: {
           src: 'src/*.js',
+          clean: {
+            src: 'public'
+          },
           'gulp-eslint': {
             test : 'test'
           }
