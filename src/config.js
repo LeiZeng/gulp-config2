@@ -13,13 +13,13 @@ const config = function gulpConfig(conf) {
 }
 
 config.getConf = function getConf(taskName, ...deps) {
-  let prev = configList
-
   // prepare deps when some task name is 'css.clean'
   if (taskName && taskName.indexOf('.')) {
     deps = taskName.split('.').slice(1).concat(deps)
     taskName = taskName.split('.').shift()
   }
+
+  let prev = configList[taskName]
   return taskName
     ? (deps && deps.length
       ? deps.reduce((result, key) => {
@@ -30,7 +30,7 @@ config.getConf = function getConf(taskName, ...deps) {
             return prev[key]
           }
           return null
-        }, configList[taskName] || configList)
+        }, configList[taskName])
       : (configList[taskName] || configList))
     : configList
 }

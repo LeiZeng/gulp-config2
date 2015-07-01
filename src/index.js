@@ -117,7 +117,7 @@ function loadTask(obj) {
 
       src = src.on('error', gutil.log)
 
-      if (config && config.dest) {
+      if (config && config.dest || gconf.getConf('dest')) {
         src = src.pipe(
           gulp.dest(
             config.dest
