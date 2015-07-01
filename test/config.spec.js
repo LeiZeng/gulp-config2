@@ -2,7 +2,7 @@ import gutil from 'gulp-util'
 
 import config from '../src/config'
 
-describe('Gulp Config', () => {
+describe('Gulp Configuration', () => {
   beforeEach(() => {
     config.default()
   })

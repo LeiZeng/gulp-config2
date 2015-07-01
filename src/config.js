@@ -13,7 +13,7 @@ const config = function gulpConfig(conf) {
 }
 
 config.getConf = function getConf(taskName, ...deps) {
-  if (taskName.indexOf('.')) {
+  if (taskName && taskName.indexOf('.')) {
     deps = taskName.split('.').slice(1).concat(deps)
     taskName = taskName.split('.').shift()
   }
