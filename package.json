@@ -1,13 +1,13 @@
 {
   "name": "gulp-config2",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "gulp config tools",
-  "main": "dist/index.js",
+  "main": "dist/conf/index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "build": "babel src/index.js -e 0 --out-file dist/index.js",
+    "build": "babel src -e 0 --out-dir dist/conf && babel tasks -e 0 --out-dir dist/tasks",
     "test": "mocha -R spec -r should --compilers js:babel/register --check-leaks test/**/*.spec.js"
   },
   "author": "LeiZeng",
