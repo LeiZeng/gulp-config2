@@ -18,7 +18,7 @@ gconf({
   },
   copy: [{
       src: ['src/*.*']
-    },{
+    }, {
       src: ['test/test.scss']
   }],
   mocha: {
@@ -27,13 +27,13 @@ gconf({
     reporter: 'spec'
   },
   lint: {
-    "ecmaFeatures": {
-      "blockBindings": true,
-      "forOf": true,
-      "jsx": true
+    ecmaFeatures: {
+      blockBindings: true,
+      forOf: true,
+      jsx: true
     },
-    "rules": {
-      "semi": 2
+    rules: {
+      semi: 2
     }
   }
 })

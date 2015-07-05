@@ -1,4 +1,3 @@
-import gutil from 'gulp-util'
 import should from 'should'
 
 import config from '../src/config'
@@ -50,7 +49,7 @@ describe('Gulp Configuration', () => {
     config.getConf('copy', 'options', 'readonly').should.be.equal(true)
   })
 
-  it.only('should get config of nested key with "."', () => {
+  it('should get config of nested key with "."', () => {
     config({
       js: {
         src: '123',
