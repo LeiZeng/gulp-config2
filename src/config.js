@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _ from 'ramda'
 
 const globalConfigDefault = {
   src: 'src/**/*.*',
@@ -36,7 +36,7 @@ config.getConf = function getConf (taskName, ...deps) {
   : configList
 }
 
-config.default = function () {
+config.default = config.reset = function () {
   configList = _.clone(globalConfigDefault)
   return config
 }

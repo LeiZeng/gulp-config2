@@ -2,12 +2,24 @@ import should from 'should'
 
 import config from '../src/config'
 
-describe('Gulp Configuration', () => {
+describe.only('Gulp Configuration', () => {
   beforeEach(() => {
-    config.default()
+    config.reset()
   })
 
   it('should get default config of src and dest', () => {
+    config.getConf().src.should.be.equal('src/**/*.*')
+    config.getConf().dest.should.be.equal('public')
+    config.getConf('src').should.be.equal('src/**/*.*')
+    config.getConf('dest').should.be.equal('public')
+  })
+
+  it('should get default config after reset', () => {
+    config({
+      src: '333',
+      dest: '3333'
+    })
+    config.reset()
     config.getConf().src.should.be.equal('src/**/*.*')
     config.getConf().dest.should.be.equal('public')
     config.getConf('src').should.be.equal('src/**/*.*')
@@ -23,17 +35,17 @@ describe('Gulp Configuration', () => {
     config.getConf('dest').should.be.equal('123')
   })
 
-  it('should get config of given key and one deps', () => {
-    config.getConf('copy', 'src').should.be.equal('src/**/*.*')
-    config.getConf('copy', 'dest').should.be.equal('public')
+  it('should get config of configured key', () => {
+    config.getConf('copy.src').should.be.equal('src/**/*.*')
+    config.getConf('copy.dest').should.be.equal('public')
     config({
       copy: {
         src: '123',
         dest: '123'
       }
     })
-    config.getConf('copy', 'src').should.be.equal('123')
-    config.getConf('copy', 'dest').should.be.equal('123')
+    config.getConf('copy.src').should.be.equal('123')
+    config.getConf('copy.dest').should.be.equal('123')
   })
 
   it('should get config of given key and deeper', () => {
@@ -46,10 +58,10 @@ describe('Gulp Configuration', () => {
         }
       }
     })
-    config.getConf('copy', 'options', 'readonly').should.be.equal(true)
+    config.getConf('copy.options.readonly').should.be.equal(true)
   })
 
-  it('should get config of nested key with "."', () => {
+  it('should get null when missing', () => {
     config({
       js: {
         src: '123',
@@ -60,8 +72,8 @@ describe('Gulp Configuration', () => {
         copy: null
       }
     })
-    config.getConf('js.clean', 'src').should.be.equal('clean')
-    config.getConf('js.copy', 'src').should.be.equal('123')
-    should(config.getConf('js.copy', 'key')).not.be.exist
+    should(config.getConf('java')).not.be.exist
+    should(config.getConf('js.copy.key')).not.be.exist
+    should(config.getConf('js.copy.key.foo.boo')).not.be.exist
   })
 })
