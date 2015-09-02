@@ -1,44 +1,48 @@
 import _ from 'ramda'
 
-const globalConfigDefault = {
+const DefaultConfig = {
   src: 'src/**/*.*',
   dest: 'public'
 }
 
-let configList = _.clone(globalConfigDefault)
+// resetToDefault :: object -> object
+const resetToDefault = _.merge(_.__, DefaultConfig)
 
-const config = function gulpConfig (conf) {
-  configList = _.merge(configList, conf)
+let configuration = resetToDefault({})
+
+//* config :: configuration -> config
+const config = (conf) => {
+  configuration = _.merge(configuration, conf)
   return config
 }
 
-config.getConf = function getConf (taskName, ...deps) {
-  // prepare deps when some task name is 'css.clean'
-  if (taskName && taskName.indexOf('.')) {
-    deps = taskName.split('.').splice(1).concat(deps)
-    taskName = taskName.split('.').shift()
-  }
-  let prev = configList
-  return taskName
-    ? (deps && deps.length
-      ? deps.reduce((result, key) => {
-        if (result) {
-          prev = result
-        }
-        if (result && result[key]) {
-          return result[key]
-        } else if (prev) {
-          return prev[key]
-        }
-        return null
-      }, configList[taskName])
-    : (configList[taskName] || configList))
-  : configList
-}
-
-config.default = config.reset = function () {
-  configList = _.clone(globalConfigDefault)
+//* config.reset :: void -> config
+config.reset = () => {
+  configuration = resetToDefault({})
   return config
 }
+
+//* config.set :: configuration -> config
+config.set = config
+
+//* config.get :: key/keyPath -> config
+config.get = (keyPath) => {
+  return getMapByPath(keyPath, configuration)
+}
+
+const log = _.curry((item) => {
+  console.log(item)
+  return item
+})
+const pathToArray = _.compose(
+  _.ifElse(_.isArrayLike, _.identity, _.of),
+  _.split('.')
+)
+const getMapByPath = _.curry((path, map) => {
+  return path ? _.path(pathToArray(path), map) : map
+})
+
+config.log = log
+config.getMapByPath = getMapByPath
 
 export default config

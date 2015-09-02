@@ -1,7 +1,7 @@
 import path from 'path'
 
 import gutil from 'gulp-util'
-import _ from 'lodash'
+import _ from 'ramda'
 import merge from 'merge-stream'
 import sequence from 'run-sequence'
 

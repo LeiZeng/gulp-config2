@@ -8,7 +8,8 @@
   },
   "scripts": {
     "build": "babel src -e 0 --out-dir dist/conf && babel tasks -e 0 --out-dir dist/tasks",
-    "test": "mocha -R spec --compilers js:babel/register --check-leaks test/**/*.spec.js"
+    "test": "mocha -R spec --compilers js:babel/register --check-leaks test/**/*.spec.js",
+    "mocha": "mocha -R spec --compilers js:babel/register --check-leaks"
   },
   "author": "LeiZeng",
   "license": "MIT",
@@ -17,14 +18,16 @@
     "gulp-eslint": "^0.14.0",
     "gulp-mocha": "^2.1.2",
     "mocha": "^2.2.5",
-    "should": "^6.0.3"
+    "should": "^6.0.3",
+    "sinon": "^1.16.1"
   },
   "dependencies": {
     "del": "^1.2.0",
     "gulp": "^3.9.0",
     "gulp-util": "^3.0.5",
-    "lodash": "^3.9.3",
+    "immutable": "^3.7.4",
     "merge-stream": "^0.1.7",
+    "ramda": "^0.17.1",
     "run-sequence": "^1.1.0",
     "through2": "^2.0.0"
   },

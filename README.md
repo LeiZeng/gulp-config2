@@ -3,7 +3,7 @@
 npm install --save-dev gulp-config2
 ```
 ##Easier to use
-No longer have to write some code, configuration only
+No longer have to write code, configuration only
 ```js
 import gconf from 'gulp-config2'
 gconf.load('gulp-sass')
