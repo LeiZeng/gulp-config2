@@ -1,45 +1,61 @@
 import should from 'should'
 import gulp from 'gulp'
-import {spy} from 'sinon'
+import {spy, stub} from 'sinon'
 
 import {
-  getTaskFunc,
-  registerTask
+  getFunc,
+  register,
+  run
 } from '../src/task'
 
 describe('Task', () => {
   beforeEach(() => {
     gulp.reset()
   })
-  describe('getTaskFunc', () => {
+  describe('getFunc', () => {
     it('should get the task function', () => {
-      getTaskFunc('./tasks/noop').should.be.a.Function
-      getTaskFunc('should').should.be.a.Function
+      getFunc('./tasks/noop').should.be.a.Function
+      getFunc('should').should.be.a.Function
     })
   })
-  describe('registerTask', () => {
+  describe('register', () => {
     it('should register the local task function to gulp', () => {
-      registerTask({
+      register({
         __task: './tasks/noop',
-        taskName: 'noop'
+        __taskName: 'noop'
       })
       gulp.hasTask('noop').should.be.equal(true)
     })
     it('should register the npm module to gulp', () => {
-      registerTask({
+      register({
         __task: 'should',
-        taskName: 'noop'
+        __taskName: 'noop'
       })
       gulp.hasTask('noop').should.be.equal(true)
     })
 
     it('should register a function to gulp', () => {
       var taskFunc = spy()
-      registerTask({
+      register({
         __task: taskFunc,
-        taskName: 'noop'
+        __taskName: 'noop'
       })
       gulp.hasTask('noop').should.be.equal(true)
+    })
+  })
+  describe('run', () => {
+    it('should run a function registered', (cb) => {
+      var taskFunc = stub().returns((done) => done())
+
+      run({
+        __task: taskFunc,
+        __taskName: 'noop',
+        src: '123123'
+      }, () =>{
+        taskFunc.calledOnce.should.be.equal(true)
+        taskFunc.calledWith({src: '123123'}).should.be.equal(true)
+        cb()
+      })
     })
   })
 })

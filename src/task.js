@@ -5,6 +5,7 @@ import gutil from 'gulp-util'
 import _ from 'ramda'
 
 import config from './config'
+import runTask from './runTask'
 
 // callbackOrNot :: taskFunc -> isCB:Bool -> taskFunc
 const callbackOrNot = (func) => {
@@ -32,9 +33,10 @@ const wrapPlaceholder = (func) => {
     }
 }
 
-// getTaskFunc :: fileName -> gulpTaskFunc
-export const getTaskFunc = _.compose(
-  wrapPlaceholder,
+// getFunc :: fileName -> (gulpTaskFunc -> func)
+export const getFunc = _.compose(
+  // wrapPlaceholder,
+  _.identity,
   _.ifElse(_.is(Function),
     _.identity,
     _.compose(
@@ -44,16 +46,25 @@ export const getTaskFunc = _.compose(
   )
 )
 
-// registerTask :: config -> config
-export const registerTask = (config) => {
-  gulp.task(config.taskName, getTaskFunc(config.__task))
+// run :: config -> config
+export const run = _.curry((config, cb) => {
+  let {
+    __taskName,
+    __task,
+    ...options
+  } = config
+  return _.pipe(
+    getFunc(__task),
+    _.curry(runTask)(_.__, cb)
+  )(options)
+})
+
+// register :: config -> config
+export const register = (config) => {
+  gulp.task(config.__taskName, getFunc(config.__task))
   return config
 }
 
-// reconfigTask :: config -> config
-export const runTask = (config) => {
-  return config
-}
 
 const log = (item) => {
   console.log(item)
