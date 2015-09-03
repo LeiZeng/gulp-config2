@@ -7,22 +7,22 @@ import _ from 'ramda'
 import config from './config'
 
 // callbackOrNot :: taskFunc -> isCB:Bool -> taskFunc
-const callbackOrNot = _.curry((func) => {
+const callbackOrNot = (func) => {
   return func.length ? (callback) => func(callback) : func
-})
+}
 
 // getFuncPath :: -> task -> taskPath
-const getFuncPath = _.curry((task) => {
+const getFuncPath = (task) => {
   return path.join(process.cwd(), task)
-})
+}
 
 // isLocalFunction :: fileName -> Bool
-const isLocalFunction = _.curry((taskFile) => {
+const isLocalFunction = (taskFile) => {
   return taskFile.indexOf('./') > -1
-})
+}
 
 // wrapPlaceholder :: Taskfunction -> Taskfunction
-const wrapPlaceholder = _.curry((func) => {
+const wrapPlaceholder = (func) => {
   return func.length ?
     (callback) => {
       return func(callback)
@@ -30,7 +30,7 @@ const wrapPlaceholder = _.curry((func) => {
     () => {
       return func()
     }
-})
+}
 
 // getTaskFunc :: fileName -> gulpTaskFunc
 export const getTaskFunc = _.compose(
@@ -45,17 +45,17 @@ export const getTaskFunc = _.compose(
 )
 
 // registerTask :: config -> config
-export const registerTask = _.curry((config) => {
+export const registerTask = (config) => {
   gulp.task(config.taskName, getTaskFunc(config.__task))
   return config
-})
+}
 
 // reconfigTask :: config -> config
-export const runTask = _.curry((config) => {
+export const runTask = (config) => {
   return config
-})
+}
 
-const log = _.curry((item) => {
+const log = (item) => {
   console.log(item)
   return item
-})
+}
