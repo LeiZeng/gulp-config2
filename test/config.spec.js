@@ -3,10 +3,6 @@ import should from 'should'
 import config from '../src/config'
 
 describe('Gulp Configuration Utils', () => {
-  it('log should return item itself', () => {
-    should(config.log(null)).be.equal(null)
-    config.log('any').should.be.equal('any')
-  })
   it('getMapByPath should', () => {
     const map = {src: '123', copy: {src: 'copy'}}
     config.getMapByPath('src', map).should.be.equal('123')
